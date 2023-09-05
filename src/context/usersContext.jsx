@@ -13,19 +13,19 @@ export const ContextProvider = ({ children }) => {
   const [usersData, setUsersData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  console.log('usersData', usersData);
-
   useEffect(() => {
-    const t = setTimeout(() => {
+    setLoading(true);
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
       setUsersData(data);
     }, 2000);
 
     return () => {
-      clearTimeout(t);
+      clearTimeout(timeoutId);
     };
   }, []);
 
-  const contextValue = useMemo(() => ({ usersData, setUsersData }), [usersData]);
+  const contextValue = useMemo(() => ({ usersData, setUsersData, loading }), [usersData, loading]);
 
   return <UsersContext.Provider value={contextValue}>{children}</UsersContext.Provider>;
 };
