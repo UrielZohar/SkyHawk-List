@@ -11,7 +11,7 @@ const StyledIconButton = styled(IconButton)({
 
 const TrashIconButton = ({ handleClick }) => {
   return (
-    <StyledIconButton aria-label="delete" size="large">
+    <StyledIconButton onClick={handleClick} aria-label="delete" size="large">
       <DeleteIcon fontSize="inherit" />
     </StyledIconButton>
   );

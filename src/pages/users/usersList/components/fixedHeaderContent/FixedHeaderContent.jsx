@@ -1,24 +1,58 @@
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
+import TrashIconButton from '../../../../../components/TrashIconButton';
+
+const headerColumns = [
+  {
+    width: 120,
+    label: 'Name',
+    dataKey: 'name',
+  },
+  {
+    width: 70,
+    label: 'Country',
+    dataKey: 'country',
+  },
+  {
+    width: 200,
+    label: 'Email',
+    dataKey: 'email',
+  },
+  {
+    width: 120,
+    label: 'Phone',
+    dataKey: 'phone',
+    display: ({phone}) => <a href={`tel:${phone}`}>{phone}</a>,
+  },
+  {
+    width: 30,
+    label: '',
+    dataKey: 'delete',
+    display: (row, actions) => {
+      const deleteRow = () => actions.delete(row);
+      return (<TrashIconButton handleClick={deleteRow} />);
+    },
+  }
+];
 
 function FixedHeaderContent() {
   return (
     <TableRow>
-      {columns.map((column) => (
+      {headerColumns.map(({dataKey, numeric, width, label}) => (
         <TableCell
-          key={column.dataKey}
+          key={dataKey}
           variant="head"
-          align={column.numeric || false ? 'right' : 'left'}
-          style={{ width: column.width }}
+          align={numeric || false ? 'right' : 'left'}
+          style={{ width: width }}
           sx={{
             backgroundColor: 'background.paper',
           }}
         >
-          {column.label}
+          {label}
         </TableCell>
       ))}
     </TableRow>
   );
 }
 
-export { FixedHeaderContent };
+export { FixedHeaderContent, headerColumns };

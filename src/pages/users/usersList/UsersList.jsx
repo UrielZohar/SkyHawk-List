@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import { Button, Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { TableVirtuoso } from 'react-virtuoso';
@@ -7,34 +7,12 @@ import { FixedHeaderContent } from './components/fixedHeaderContent/FixedHeaderC
 import { RowContent } from './components/rowContent/RowContent';
 import { useUsersContext } from '../../../context/usersContext';
 import AddButton from '../../../components/AddButton';
+import { deleteUser } from './UsersList.utils'
 import styles from '../users.module.css';
 
-const columns = [
-  {
-    width: 200,
-    label: 'Name',
-    dataKey: 'name',
-  },
-  {
-    width: 120,
-    label: 'Country',
-    dataKey: 'country',
-  },
-  {
-    width: 120,
-    label: 'Email',
-    dataKey: 'email',
-  },
-  {
-    width: 120,
-    label: 'Phone',
-    dataKey: 'phone',
-    display: ({phone}) => <a href={`tel:${phone}`}>{phone}</a>,
-  },
-];
-
 function UsersList() {
-  const { usersData } = useUsersContext();
+  const { usersData, setUsersData } = useUsersContext();
+  const deleteRow = useCallback(deleteUser(usersData, setUsersData), [usersData, setUsersData]);
 
   return (
     <div className={styles.usersList}>
@@ -48,7 +26,7 @@ function UsersList() {
             data={usersData}
             components={VirtuosoTableComponents}
             fixedHeaderContent={FixedHeaderContent}
-            itemContent={RowContent}
+            itemContent={RowContent({delete: deleteRow})}
           />
         </Paper>
       </div>

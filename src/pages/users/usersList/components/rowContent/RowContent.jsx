@@ -1,15 +1,16 @@
 import * as React from 'react';
 import TableCell from '@mui/material/TableCell';
+import { headerColumns } from '../fixedHeaderContent/FixedHeaderContent';
 
-function RowContent(_index, row) {
+const RowContent = (actions) => (_index, row) => {
   return (
     <React.Fragment>
-      {columns.map((column) => (
+      {headerColumns.map(({dataKey, numeric, display}) => (
         <TableCell
-          key={column.dataKey}
-          align={column.numeric || false ? 'right' : 'left'}
+          key={dataKey}
+          align={numeric || false ? 'right' : 'left'}
         >
-          {column.display ? column.display(row) : row[column.dataKey]}
+          {display ? display(row, actions) : row[dataKey]}
         </TableCell>
       ))}
     </React.Fragment>
