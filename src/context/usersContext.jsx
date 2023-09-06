@@ -1,10 +1,11 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import data from '../data/initialUsersData.json';
 
 // initial value
 const UsersContext = createContext({
   usersData: [],
   setUsersData: () => {},
+  addNewUser: () => {},
   loading: false,
 });
 
@@ -25,7 +26,11 @@ export const ContextProvider = ({ children }) => {
     };
   }, []);
 
-  const contextValue = useMemo(() => ({ usersData, setUsersData, loading }), [usersData, loading]);
+  const addNewUser = useCallback((newUser) => {
+    setUsersData((prev) => [newUser, ...prev]);
+  }, [setUsersData]);
+
+  const contextValue = useMemo(() => ({ usersData, setUsersData, addNewUser, loading }), [usersData, loading, addNewUser, setUsersData]);
 
   return <UsersContext.Provider value={contextValue}>{children}</UsersContext.Provider>;
 };

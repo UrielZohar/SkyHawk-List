@@ -10,14 +10,16 @@ const validatorMap = {
 const validator = (prevNewUser, currentNewUser) => {
   const validationErrors = {};
   ['name', 'country', 'email', 'phone'].forEach((field) => {
-    if (!currentNewUser[field] && prevNewUser[field]) {
+    if (prevNewUser[field] && !currentNewUser[field])  {
       validationErrors[field] = 'empty field';
       return;
-    } 
+    }
+    if (!currentNewUser[field]) return;
     if (!(validatorMap[field](currentNewUser[field]))) {
       validationErrors[field] = 'invalid input';
     }
   });
+  return validationErrors;
 }
 
 export { validator };

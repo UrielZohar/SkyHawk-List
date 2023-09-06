@@ -25,12 +25,17 @@ const useNewUser = () => {
     setNewUser(tmpNewUser);
   };
 
+  const deleteNewUser = () => {
+    setNewUser(null);
+  }
+
   return {
     newUser,
     handleChange,
     setNewUser,
     createNewUser,
     newUserErrors,
+    deleteNewUser,
   };
 };
 

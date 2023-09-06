@@ -3,12 +3,12 @@ import TableCell from '@mui/material/TableCell';
 import { headerColumns } from '../fixedHeaderContent/FixedHeaderContent';
 import { NewUserRowContent } from '../newUserRowContent/NewUserRowContent';
 
-const RowContent = (actions) => (_index, row) => {
+const RowContent = (actions, newUserErrors) => (_index, row) => {
 
   return (
     <React.Fragment>
       {
-        row.isNewRow ? <NewUserRowContent actions={actions} /> :
+        row.isNewRow ? <NewUserRowContent actions={actions} newUserErrors={newUserErrors} /> :
           (<React.Fragment>
             {headerColumns.map(({dataKey, numeric, display}) => (
               <TableCell
