@@ -1,3 +1,13 @@
+# In This Home Assignment We Have
+
+✅ Design with [Material UI React](https://mui.com/)
+
+✅ [Deployment to AWS S3](http://skyhawk-list.s3-website-us-east-1.amazonaws.com/)
+
+✅ Bonus Parts
+
+✅ Performance improvments - using Virtual Table to support large data cases (showing 10 items at a time)
+
 ## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
