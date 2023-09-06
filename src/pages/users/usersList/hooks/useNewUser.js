@@ -17,10 +17,10 @@ const useNewUser = () => {
     });
   };
 
-  const handleChange = (event) => {
+  const handleChange = (event, value, name) => {
     const tmpNewUser = {
       ...newUser,
-      [event.target.name]: event.target.value,
+      [event.target.name || name]: event.target.value || value,
     };
     const newUserErrors = validator(newUser, tmpNewUser);
     setNewUserErrors(newUserErrors);

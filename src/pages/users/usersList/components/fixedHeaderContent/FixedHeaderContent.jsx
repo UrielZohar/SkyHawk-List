@@ -9,7 +9,7 @@ const headerColumns = [
     dataKey: 'name',
   },
   {
-    width: 70,
+    width: 100,
     label: 'Country',
     dataKey: 'country',
   },

@@ -45,7 +45,7 @@ function UsersList() {
         {newUser && <ValidationInformation newUser={newUser} newUserErrors={newUserErrors} />}
       </div>
       <div className={styles.rightButtonContainer}>
-        <PrimaryButton disabled={!isValid} handleClick={handleAddNewUser}>Save</PrimaryButton>
+        <PrimaryButton disabled={!isValid && !newUser} handleClick={handleAddNewUser}>Save</PrimaryButton>
       </div>
     </>
   );

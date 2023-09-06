@@ -22,7 +22,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   height: 500px;
-  width: 100%;
+  width: 900px;
 
   :global(.MuiTableCell-root) {
     padding: 5px 10px;
