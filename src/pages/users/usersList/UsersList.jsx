@@ -28,7 +28,7 @@ function UsersList() {
       <div className={styles.usersList}>
         <div className={styles.usersListHeader}>
           <Typography variant="h6">Users List ({usersData.length})</Typography>
-          <AddButton handleClick={createNewUser} />
+          <AddButton handleClick={createNewUser} disabled={!!newUser} />
         </div>
         <div className={styles.usersListContent}>
           <Paper style={{ height: 400, width: '100%' }}>
@@ -45,7 +45,7 @@ function UsersList() {
         {newUser && <ValidationInformation newUser={newUser} newUserErrors={newUserErrors} />}
       </div>
       <div className={styles.rightButtonContainer}>
-        <PrimaryButton disabled={!isValid && !newUser} handleClick={handleAddNewUser}>Save</PrimaryButton>
+        <PrimaryButton disabled={!isValid || !newUser} handleClick={handleAddNewUser}>Save</PrimaryButton>
       </div>
     </>
   );
