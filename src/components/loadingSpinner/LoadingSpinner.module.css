@@ -1,0 +1,11 @@
+.loadingSpinner {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(210, 210, 210, 0.3);
+  z-index: 1000;
+}
