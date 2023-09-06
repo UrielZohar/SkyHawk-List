@@ -15,6 +15,7 @@ function UsersList() {
   const { usersData, setUsersData } = useUsersContext();
   const deleteRow = useCallback(deleteUser(usersData, setUsersData), [usersData, setUsersData]);
   const { newUser, handleChange, createNewUser, setNewUser } = useNewUser();
+  console.log(newUser);
 
   return (
     <div className={styles.usersList}>
@@ -28,7 +29,7 @@ function UsersList() {
             data={newUser ? [newUser, ...usersData] : usersData}
             components={VirtuosoTableComponents}
             fixedHeaderContent={FixedHeaderContent}
-            itemContent={RowContent({delete: deleteRow})}
+            itemContent={RowContent({delete: deleteRow, handleChange,})}
           />
         </Paper>
       </div>
