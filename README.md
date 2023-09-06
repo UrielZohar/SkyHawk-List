@@ -6,7 +6,7 @@
 
 ✅ Bonus Parts
 
-✅ Performance improvments - using Virtual Table to support large data cases (showing 10 items at a time)
+✅ Performance improvements - using Virtual Table to support large data cases (showing 10 items at a time)
 
 ## React + Vite
 
