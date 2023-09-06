@@ -16,7 +16,7 @@ import styles from '../users.module.css';
 function UsersList() {
   const { usersData, setUsersData, addNewUser } = useUsersContext();
   const deleteRow = useCallback(deleteUser(usersData, setUsersData), [usersData, setUsersData]);
-  const { newUser, handleChange, createNewUser, setNewUser, deleteNewUser, newUserErrors } = useNewUser();
+  const { newUser, handleChange, createNewUser, setNewUser, deleteNewUser, newUserErrors, isValid } = useNewUser();
   const handleAddNewUser = useCallback(() => {
     setNewUser(null);
     addNewUser({...newUser, isNewRow: false});
@@ -45,7 +45,7 @@ function UsersList() {
         {newUser && <ValidationInformation newUser={newUser} newUserErrors={newUserErrors} />}
       </div>
       <div className={styles.rightButtonContainer}>
-        <PrimaryButton disabled={false} handleClick={handleAddNewUser}>Save</PrimaryButton>
+        <PrimaryButton disabled={!isValid} handleClick={handleAddNewUser}>Save</PrimaryButton>
       </div>
     </>
   );

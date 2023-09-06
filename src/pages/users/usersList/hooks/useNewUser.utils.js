@@ -22,4 +22,10 @@ const validator = (prevNewUser, currentNewUser) => {
   return validationErrors;
 }
 
-export { validator };
+const checkIsValid = (newUser, validationErrors) => {
+  const isValid = Object.keys(validationErrors).length === 0;
+  const emptyFields = Object.keys(newUser).filter((field) => !newUser[field]).length;
+  return isValid && emptyFields === 0;
+}
+
+export { validator, checkIsValid };

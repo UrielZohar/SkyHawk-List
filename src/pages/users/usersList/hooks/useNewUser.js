@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { validator } from './useNewUser.utils';
+import { validator, checkIsValid } from './useNewUser.utils';
 
 const useNewUser = () => {
   const [newUser, setNewUser] = useState();
   const [newUserErrors, setNewUserErrors] = useState({});
+  const [isValid, setIsValid] = useState(false);
 
   const createNewUser = () => {
     setNewUser({
@@ -21,8 +22,10 @@ const useNewUser = () => {
       ...newUser,
       [event.target.name]: event.target.value,
     };
-    setNewUserErrors(validator(newUser, tmpNewUser));
+    const newUserErrors = validator(newUser, tmpNewUser);
+    setNewUserErrors(newUserErrors);
     setNewUser(tmpNewUser);
+    setIsValid(checkIsValid(tmpNewUser, newUserErrors));
   };
 
   const deleteNewUser = () => {
@@ -36,6 +39,7 @@ const useNewUser = () => {
     createNewUser,
     newUserErrors,
     deleteNewUser,
+    isValid,
   };
 };
 
