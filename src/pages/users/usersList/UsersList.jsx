@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { TableVirtuoso } from 'react-virtuoso';
@@ -9,7 +9,7 @@ import { useUsersContext } from '../../../context/usersContext';
 import PrimaryButton from '../../../components/PrimaryButton';
 import AddButton from '../../../components/AddButton';
 import { ValidationInformation } from './components/validationInformation/ValidationInformation'
-import { deleteUser, validatorMap, countEmptyFiels, countErrorFields, checkIsHasChanges } from './UsersList.utils'
+import { deleteUser, validatorMap, countEmptyFiels, countErrorFields, checkIsHasChanges, getNewEmptyUser, mergeChangesWithUsersData } from './UsersList.utils'
 import styles from '../users.module.css';
 
 function UsersList() {
@@ -17,45 +17,53 @@ function UsersList() {
   const [localErrorsMap, setLocalErrorsMap] = useState({});
   const [newUsers, setNewUsers] = useState([]);
   const [localChangesMap, setLocalChangesMap] = useState({});
-  const deleteRow = useCallback(deleteUser({usersData, setUsersData, localChangesMap, setNewUsers, setLocalChangesMap, setLocalErrorsMap}), [usersData, setUsersData, localChangesMap]);
-  const handleChange = useCallback((id, field, value) => {
+  const deleteRow = useCallback(deleteUser({usersData, setUsersData, localChangesMap, setNewUsers, setLocalChangesMap, setLocalErrorsMap}), [usersData, setUsersData, localChangesMap, setNewUsers, setLocalChangesMap, setLocalErrorsMap]);
+  const handleChange = useCallback((id, field, value, row) => {
     // save the local change
-    setLocalChangesMap((prev) => ({...prev, [id]: {...prev[id], [field]: value}}));
-    // validate the change
-    const isError = validatorMap[field](value);
-    setLocalErrorsMap((prev) => ({...prev, [`${id}_${field}`]: isError}));
+    setLocalChangesMap((prev) => ({...prev, [id]: {...row, [field]: value}}));
+    // check if the change is valid
+    const isValid = validatorMap[field](value);
+    setLocalErrorsMap((prev) => ({...prev, [`${id}_${field}`]: !isValid}));
   }, [localChangesMap, setLocalChangesMap]);  
-  const emptyFieldsCounter = countEmptyFiels(localChangesMap, newUsers);
+  const emptyFieldsCounter = countEmptyFiels(localChangesMap);
   const errorFieldsCounter = countErrorFields(localErrorsMap);
   const isHasChanges = checkIsHasChanges(localChangesMap, newUsers);
   const handleAddNewUser = useCallback(() => {
-    setNewUsers((prev) => [getNewEmptyUser(), ...prev]);
-  }, [setNewUsers, newUsers]);
-  const actions = useMemo(() => ({delete: deleteRow, handleChange, createNewUser, handleAddNewUser}), [deleteRow, handleChange, createNewUser, deleteNewUser, handleAddNewUser]);
+    const newUser = getNewEmptyUser();
+    setNewUsers((prev) => [newUser, ...prev]);
+    setLocalChangesMap((prev) => ({...prev, [newUser.id]: {...newUser}}));
+  }, [setNewUsers, newUsers, setLocalChangesMap]);
+  const saveLocalChanges = useCallback(() => {
+    const mergedUsers = mergeChangesWithUsersData(usersData, localChangesMap);
+    setLocalChangesMap({});
+    setNewUsers([]);
+    setUsersData(mergedUsers);
+  }, [setUsersData, usersData, localChangesMap]);
+  const actions = useMemo(() => ({delete: deleteRow, handleChange, handleAddNewUser}), [deleteRow, handleChange, handleAddNewUser]);
 
   return (
     <>
       <div className={styles.usersList}>
         <div className={styles.usersListHeader}>
-          <Typography variant="h6">Users List ({usersData.length})</Typography>
-          <AddButton handleClick={createNewUser} disabled={!!newUser} />
+          <Typography variant="h6">Users List ({usersData.length + newUsers.length})</Typography>
+          <AddButton handleClick={handleAddNewUser} />
         </div>
         <div className={styles.usersListContent}>
           <Paper style={{ height: 400, width: '100%' }}>
             <TableVirtuoso
-              data={newUser ? [newUser, ...usersData] : usersData}
+              data={[...newUsers, ...usersData]}
               components={VirtuosoTableComponents}
               fixedHeaderContent={FixedHeaderContent}
-              itemContent={RowContent(actions, newUserErrors)}
+              itemContent={RowContent({actions, localErrorsMap, localChangesMap})}
               />
           </Paper>
         </div>
       </div>
       <div className={styles.rightButtonContainer}>
-        {(emptyFieldsCounter + errorFieldsCounter) && <ValidationInformation emptyFieldsCounter={emptyFieldsCounter} errorFieldsCount={errorFieldsCounter} />}
+        {(!!(emptyFieldsCounter + errorFieldsCounter)) && <ValidationInformation emptyFieldsCounter={emptyFieldsCounter} errorFieldsCounter={errorFieldsCounter} />}
       </div>
       <div className={styles.rightButtonContainer}>
-        <PrimaryButton disabled={!isHasChanges && (emptyFieldsCounter + errorFieldsCounter)} handleClick={saveLocalChanges}>Save</PrimaryButton>
+        <PrimaryButton disabled={!isHasChanges || !!(emptyFieldsCounter + errorFieldsCounter)} handleClick={saveLocalChanges}>Save</PrimaryButton>
       </div>
     </>
   );

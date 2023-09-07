@@ -22,7 +22,6 @@ const headerColumns = [
     width: 120,
     label: 'Phone',
     dataKey: 'phone',
-    display: ({phone}) => <a href={`tel:${phone}`}>{phone}</a>,
   },
   {
     width: 30,
