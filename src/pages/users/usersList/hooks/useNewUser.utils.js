@@ -1,7 +1,7 @@
 import countries from '../../../../data/countries.json';
 
 const validatorMap = {
-  name: (value) => value.length > 3,
+  name: (value) => value.length,
   country: (value) => countries.includes(value),
   email: (value) => value.includes('@'),
   phone: (value) => value.startsWith('+') && value.length > 1,

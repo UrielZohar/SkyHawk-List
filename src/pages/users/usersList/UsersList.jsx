@@ -9,19 +9,29 @@ import { useUsersContext } from '../../../context/usersContext';
 import PrimaryButton from '../../../components/PrimaryButton';
 import AddButton from '../../../components/AddButton';
 import { ValidationInformation } from './components/validationInformation/ValidationInformation'
-import { deleteUser } from './UsersList.utils'
-import { useNewUser } from './hooks/useNewUser';
+import { deleteUser, validatorMap, countEmptyFiels, countErrorFields, checkIsHasChanges } from './UsersList.utils'
 import styles from '../users.module.css';
 
 function UsersList() {
-  const { usersData, setUsersData, addNewUser } = useUsersContext();
-  const deleteRow = useCallback(deleteUser(usersData, setUsersData), [usersData, setUsersData]);
-  const { newUser, handleChange, createNewUser, setNewUser, deleteNewUser, newUserErrors, isValid } = useNewUser();
+  const { usersData, setUsersData } = useUsersContext();
+  const [localErrorsMap, setLocalErrorsMap] = useState({});
+  const [newUsers, setNewUsers] = useState([]);
+  const [localChangesMap, setLocalChangesMap] = useState({});
+  const deleteRow = useCallback(deleteUser({usersData, setUsersData, localChangesMap, setNewUsers, setLocalChangesMap, setLocalErrorsMap}), [usersData, setUsersData, localChangesMap]);
+  const handleChange = useCallback((id, field, value) => {
+    // save the local change
+    setLocalChangesMap((prev) => ({...prev, [id]: {...prev[id], [field]: value}}));
+    // validate the change
+    const isError = validatorMap[field](value);
+    setLocalErrorsMap((prev) => ({...prev, [`${id}_${field}`]: isError}));
+  }, [localChangesMap, setLocalChangesMap]);  
+  const emptyFieldsCounter = countEmptyFiels(localChangesMap, newUsers);
+  const errorFieldsCounter = countErrorFields(localErrorsMap);
+  const isHasChanges = checkIsHasChanges(localChangesMap, newUsers);
   const handleAddNewUser = useCallback(() => {
-    setNewUser(null);
-    addNewUser({...newUser, isNewRow: false});
-  }, [newUser, addNewUser, setNewUser]);
-  const actions = useMemo(() => ({delete: deleteRow, handleChange, createNewUser, deleteNewUser, handleAddNewUser}), [deleteRow, handleChange, createNewUser, deleteNewUser, handleAddNewUser]);
+    setNewUsers((prev) => [getNewEmptyUser(), ...prev]);
+  }, [setNewUsers, newUsers]);
+  const actions = useMemo(() => ({delete: deleteRow, handleChange, createNewUser, handleAddNewUser}), [deleteRow, handleChange, createNewUser, deleteNewUser, handleAddNewUser]);
 
   return (
     <>
@@ -42,10 +52,10 @@ function UsersList() {
         </div>
       </div>
       <div className={styles.rightButtonContainer}>
-        {newUser && <ValidationInformation newUser={newUser} newUserErrors={newUserErrors} />}
+        {(emptyFieldsCounter + errorFieldsCounter) && <ValidationInformation emptyFieldsCounter={emptyFieldsCounter} errorFieldsCount={errorFieldsCounter} />}
       </div>
       <div className={styles.rightButtonContainer}>
-        <PrimaryButton disabled={!isValid || !newUser} handleClick={handleAddNewUser}>Save</PrimaryButton>
+        <PrimaryButton disabled={!isHasChanges && (emptyFieldsCounter + errorFieldsCounter)} handleClick={saveLocalChanges}>Save</PrimaryButton>
       </div>
     </>
   );
